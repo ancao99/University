@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -29,17 +31,19 @@ public class UniversityService {
     }
 
     // Fetch universities for multiple countries using multithreading
-    public List<University> getUniversitiesForMultipleCountries(List<String> countries) {
+    public Map<String, List<University>> getUniversitiesForMultipleCountries(List<String> countries) {
         List<CompletableFuture<List<University>>> futures = new ArrayList<>();
 
         for (String country : countries) {
            futures.add(CompletableFuture.supplyAsync(() -> getUniversitiesByCountry(country)));
         }
 
-        List<University> allResults = new ArrayList<>();
-        for (CompletableFuture<List<University>> future : futures) {
+        Map<String,List<University>> allResults = new HashMap<>();
+        for (int i = 0; i < futures.size(); i++) {
+            String country = countries.get(i);
+            CompletableFuture<List<University>> future = futures.get(i);
             try {
-                allResults.addAll(future.get());
+                allResults.put(country,(future.get()));
             } catch (Exception e) {
                 throw new RuntimeException("Error while fetching data for one or more countries", e);
             }

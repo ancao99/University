@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("universities")
@@ -25,8 +26,8 @@ public class UniversityController {
 
     // Fetch universities for multiple countries
     @PostMapping("/search")
-    public ResponseEntity<List<University>> getUniversitiesForMultipleCountries(@RequestBody List<String> countries) {
-        List<University> universities = universityService.getUniversitiesForMultipleCountries(countries);
+    public ResponseEntity<Map<String, List<University>>> getUniversitiesForMultipleCountries(@RequestBody List<String> countries) {
+        Map<String, List<University>> universities = universityService.getUniversitiesForMultipleCountries(countries);
         return new ResponseEntity<>(universities, HttpStatus.OK);
     }
 }
